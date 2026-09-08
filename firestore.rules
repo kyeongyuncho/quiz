@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+ match /databases/{database}/documents {
+  match /events/{eventId}/participants/{userId} {
+   allow read: if request.auth != null;
+   allow create: if request.auth != null && request.auth.uid == userId
+     && request.resource.data.uid == request.auth.uid
+     && request.resource.data.nickname is string
+     && request.resource.data.nickname.size() >= 2
+     && request.resource.data.nickname.size() <= 12
+     && request.resource.data.score == 0
+     && request.resource.data.correctCount == 0;
+   allow update: if request.auth != null && request.auth.uid == userId
+     && request.resource.data.uid == resource.data.uid
+     && request.resource.data.nickname == resource.data.nickname;
+  }
+  match /events/{eventId}/questions/{questionId} {
+   allow read: if request.auth != null;
+   allow create: if request.auth != null && request.resource.data.correctCount == 1;
+   allow update: if request.auth != null
+     && request.resource.data.correctCount == resource.data.correctCount + 1;
+   allow delete: if false;
+  }
+  match /events/{eventId}/submissions/{submissionId} {
+   allow read: if request.auth != null;
+   allow create: if request.auth != null
+     && request.resource.data.uid == request.auth.uid
+     && request.resource.data.nickname is string
+     && request.resource.data.questionId is string
+     && request.resource.data.correct is bool;
+   allow update, delete: if false;
+  }
+  match /{document=**} { allow read, write: if false; }
+ }
+}
