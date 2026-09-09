@@ -69,9 +69,7 @@ const EVENT_ID =
 */
 
 const ADMIN_NICKNAMES = [
-    "관리자",
-    "진행자",
-    "퀴즈마스터"
+    "경영기획팀조경윤"
 ];
 
 
@@ -82,7 +80,7 @@ const ADMIN_NICKNAMES = [
 */
 
 const ADMIN_PIN =
-    "1234";
+    "3923";
 
 
 /*
