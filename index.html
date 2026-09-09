@@ -1,31 +1,61 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>개인정보 보호 낱말퀴즈</title><link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>개인정보 보호 가로세로 낱말퀴즈</title>
+
+    <link rel="stylesheet" href="style.css">
 </head>
-<body><main class="app">
-<section id="entry" class="screen active">
-<div class="hero"><span class="badge">2026 개인정보 보호 캠페인</span>
-<h1>개인정보 보호<br><b>낱말퀴즈</b></h1>
-<p>닉네임을 입력하고 퀴즈에 참여하세요.<br>빠르고 정확하게 맞힐수록 높은 점수!</p></div>
-<div class="card entry-card"><label for="nickname">닉네임</label>
-<input id="nickname" maxlength="12" autocomplete="off" placeholder="예: 개인정보지킴이">
-<button id="enterBtn" class="primary">입장하기</button>
-<p class="hint">※ 닉네임은 실시간 순위표에 표시됩니다.</p></div>
-<div class="info">🏆 <div><strong>실시간 순위</strong><small>참여자 점수가 바로 반영됩니다.</small></div></div>
-</section>
-<section id="quiz" class="screen"><header class="topbar">
-<div><small>개인정보 보호 낱말퀴즈</small><strong id="progress">1 / 10</strong></div>
-<div class="score"><small>점수</small><strong id="score">0</strong></div></header>
-<div class="card question-card"><span id="qno" class="qno">QUESTION 01</span>
-<h2 id="question">문제</h2><input id="answer" class="answer" autocomplete="off" placeholder="정답을 입력하세요" enterkeyhint="done">
-<button id="submit" class="primary">정답 제출</button><div id="feedback" class="feedback"></div></div>
-<div class="ranking"><div class="ranking-head"><strong>🏆 실시간 TOP 5</strong><span id="myRank">내 순위 -</span></div><ol id="rankingList"></ol></div>
-</section>
-<section id="result" class="screen"><div class="card result"><div class="trophy">🏆</div><small>QUIZ COMPLETE</small>
-<h1 id="resultName"></h1><div class="big-score"><span id="resultScore">0</span><em>점</em></div>
-<div class="stats"><div><small>정답</small><strong id="resultCorrect">0</strong></div><div><small>최종 순위</small><strong id="resultRank">-</strong></div></div>
-<p>수고하셨습니다! 최종 순위가 실시간으로 반영됩니다.</p></div>
-<div class="ranking"><div class="ranking-head"><strong>🏆 최종 순위</strong></div><ol id="finalRanking"></ol></div></section>
-</main><script type="module" src="app.js"></script></body></html>
+
+<body>
+
+<div class="quiz-container">
+
+    <!-- 제목 -->
+    <header class="quiz-header">
+        <div class="small-title">PERSONAL INFORMATION PROTECTION</div>
+        <h1>개인정보 보호<br>가로세로 낱말퀴즈</h1>
+    </header>
+
+
+    <!-- 낱말퍼즐 -->
+    <section class="puzzle-card">
+
+        <div id="puzzleGrid" class="puzzle-grid"></div>
+
+    </section>
+
+
+    <!-- 선택된 문제 -->
+    <section class="question-card">
+
+        <div id="questionNumber" class="question-number">
+            문제를 선택해주세요
+        </div>
+
+        <div id="questionText" class="question-text">
+            퍼즐의 칸을 클릭하면 문제가 나타납니다.
+        </div>
+
+    </section>
+
+
+    <!-- 문제 목록 -->
+    <section class="question-list-card">
+
+        <h2>문제 목록</h2>
+
+        <div id="questionList"></div>
+
+    </section>
+
+</div>
+
+
+<script src="puzzle.js"></script>
+
+</body>
+</html>
