@@ -2,91 +2,241 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
 
-    <title>개인정보 보호 가로세로 낱말퀴즈</title>
+    <title>개인정보 보호 낱말퀴즈</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="quiz-container">
+<div class="app">
 
-    <!-- 제목 -->
-    <header class="quiz-header">
-        <div class="small-title">PERSONAL INFORMATION PROTECTION</div>
-        <h1>개인정보 보호<br>가로세로 낱말퀴즈</h1>
-    </header>
+    <!-- =========================
+         닉네임 입력 화면
+    ========================== -->
+    <section id="nicknameScreen" class="screen">
 
+        <div class="logo-area">
+            <div class="logo-icon">🔐</div>
 
-    <!-- 낱말퍼즐 -->
-    <section class="puzzle-card">
+            <h1>개인정보 보호<br>가로세로 낱말퀴즈</h1>
 
-        <div id="puzzleGrid" class="puzzle-grid"></div>
+            <p>
+                닉네임을 입력하고<br>
+                퀴즈에 참여해주세요.
+            </p>
+        </div>
+
+        <div class="nickname-card">
+
+            <input
+                type="text"
+                id="nicknameInput"
+                maxlength="10"
+                placeholder="닉네임을 입력하세요"
+                autocomplete="off"
+            >
+
+            <button id="nicknameButton">
+                퀴즈 입장
+            </button>
+
+        </div>
 
     </section>
 
-    </div>
 
-</section>
-        
-       <!-- <div id="questionNumber" class="question-number">
-            문제를 선택해주세요
+    <!-- =========================
+         대기 화면
+    ========================== -->
+    <section id="waitingScreen" class="screen hidden">
+
+        <div class="waiting-card">
+
+            <div class="waiting-icon">⏳</div>
+
+            <h2>퀴즈 시작을 기다리는 중입니다.</h2>
+
+            <p>
+                관리자가 문제를 시작하면<br>
+                자동으로 문제가 표시됩니다.
+            </p>
+
+            <div class="my-nickname">
+                <span>참가자</span>
+                <strong id="waitingNickname"></strong>
+            </div>
+
         </div>
 
-        <div id="questionText" class="question-text">
-            퍼즐의 칸을 클릭하면 문제가 나타납니다.
+    </section>
+
+
+    <!-- =========================
+         퀴즈 화면
+    ========================== -->
+    <section id="quizScreen" class="screen hidden">
+
+        <!-- 상단 -->
+        <header class="quiz-header">
+
+            <div>
+                <div class="quiz-title">
+                    개인정보 보호 낱말퀴즈
+                </div>
+
+                <div class="quiz-status">
+                    <span id="currentQuestionLabel">
+                        문제를 준비하고 있습니다.
+                    </span>
+                </div>
+            </div>
+
+            <!-- TOP 5 -->
+            <div class="ranking-mini">
+
+                <div class="ranking-title">
+                    🏆 TOP 5
+                </div>
+
+                <div id="topRanking">
+                    -
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- 현재 내 점수 -->
+        <div class="my-score-bar">
+
+            <span>
+                <strong id="myNickname"></strong>
+            </span>
+
+            <span>
+                <strong id="myScore">0</strong>점
+            </span>
+
         </div>
 
-    </section> 문제 보이는 부분-->
+
+        <!-- 퍼즐 -->
+        <main>
+
+            <div class="puzzle-card">
+
+                <div
+                    id="puzzleGrid"
+                    class="puzzle-grid"
+                ></div>
+
+            </div>
 
 
-    <!-- 문제 목록 삭제
-    <section class="question-list-card">
+            <!-- 문제 -->
+            <section class="question-card">
 
-        <h2>문제 목록</h2>
+                <div
+                    id="questionNumber"
+                    class="question-number"
+                >
+                    문제를 선택해주세요
+                </div>
 
-        <div id="questionList"></div>
+                <div
+                    id="questionText"
+                    class="question-text"
+                >
+                    퍼즐의 칸을 클릭하면 문제가 나타납니다.
+                </div>
 
-    </section> -->
-    <!-- 문제 -->
-    <section class="question-card">
 
-    <div id="questionNumber" class="question-number">
-        문제를 선택해주세요
-    </div>
+                <div class="answer-area">
 
-    <div id="questionText" class="question-text">
-        퍼즐의 칸을 클릭하면 문제가 나타납니다.
-    </div>
+                    <input
+                        type="text"
+                        id="answerInput"
+                        class="answer-input"
+                        placeholder="정답을 입력하세요"
+                        autocomplete="off"
+                    >
 
-    <div class="answer-area">
+                    <button
+                        type="button"
+                        id="answerButton"
+                        class="answer-button"
+                    >
+                        입력
+                    </button>
 
-        <input
-            type="text"
-            id="answerInput"
-            class="answer-input"
-            placeholder="정답을 입력하세요"
-            autocomplete="off"
-        >
+                </div>
 
-        <button
-            type="button"
-            id="answerButton"
-            class="answer-button"
-        >
-            입력
-        </button>
+                <div
+                    id="answerMessage"
+                    class="answer-message"
+                ></div>
 
-    </div>
+            </section>
 
-</section>
+        </main>
+
+    </section>
+
+
+    <!-- =========================
+         최종 결과
+    ========================== -->
+    <section id="resultScreen" class="screen hidden">
+
+        <div class="result-card">
+
+            <div class="result-icon">
+                🏆
+            </div>
+
+            <h2>퀴즈 종료!</h2>
+
+            <p>
+                <strong id="resultNickname"></strong>님의
+                최종 점수
+            </p>
+
+            <div class="final-score">
+                <strong id="resultScore">0</strong>
+                <span>점</span>
+            </div>
+
+            <div class="final-rank">
+                최종 <strong id="resultRank">-</strong>위
+            </div>
+
+        </div>
+
+
+        <div class="final-ranking-card">
+
+            <h3>🏆 최종 순위</h3>
+
+            <div id="finalRanking">
+                -
+            </div>
+
+        </div>
+
+    </section>
+
 </div>
 
 
-<script src="puzzle.js"></script>
+<!-- Firebase -->
+<script type="module" src="./app.js"></script>
 
 </body>
 </html>
