@@ -62,15 +62,46 @@
     </section> 문제 보이는 부분-->
 
 
-    <!-- 문제 목록 -->
+    <!-- 문제 목록 삭제
     <section class="question-list-card">
 
         <h2>문제 목록</h2>
 
         <div id="questionList"></div>
 
-    </section>
+    </section> -->
+    <!-- 문제 -->
+    <section class="question-card">
 
+    <div id="questionNumber" class="question-number">
+        문제를 선택해주세요
+    </div>
+
+    <div id="questionText" class="question-text">
+        퍼즐의 칸을 클릭하면 문제가 나타납니다.
+    </div>
+
+    <div class="answer-area">
+
+        <input
+            type="text"
+            id="answerInput"
+            class="answer-input"
+            placeholder="정답을 입력하세요"
+            autocomplete="off"
+        >
+
+        <button
+            type="button"
+            id="answerButton"
+            class="answer-button"
+        >
+            입력
+        </button>
+
+    </div>
+
+</section>
 </div>
 
 

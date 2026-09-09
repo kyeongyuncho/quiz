@@ -323,29 +323,25 @@ function drawGrid() {
 
 function selectCell(data) {
 
-    selectedWordIndex = wordIndex;
-
-    // 이전 선택 제거
+    // 기존 강조 제거
     document
         .querySelectorAll(".puzzle-cell")
         .forEach(cell => {
-
             cell.classList.remove(
                 "selected",
                 "word-selected"
             );
-
         });
 
+    /*
+     * 하나의 칸에 여러 단어가 걸쳐 있는 경우
+     * 일단 첫 번째 단어를 선택
+     */
+    const wordIndex = data.words[0];
 
-    // 해당 칸에 연결된 문제
-    const wordIndex =
-        data.words[0];
+    selectedWordIndex = wordIndex;
 
-
-    const word =
-        puzzle.words[wordIndex];
-
+    const word = puzzle.words[wordIndex];
 
     // 문제 표시
     questionNumber.textContent =
@@ -354,47 +350,26 @@ function selectCell(data) {
     questionText.textContent =
         word.question;
 
-
-    // 해당 단어 전체 강조
+    // 선택된 단어 전체 강조
     highlightWord(word);
 
-
-    // 클릭한 칸 강조
+    // 실제 클릭한 칸 강조
     const selectedCell =
         document.querySelector(
             `.puzzle-cell[data-row="${data.row}"][data-col="${data.col}"]`
         );
 
-
     if (selectedCell) {
-
         selectedCell.classList.add("selected");
-
     }
 
+    // 입력창 초기화
+    const answerInput =
+        document.getElementById("answerInput");
 
-    // 문제 목록 강조
-    document
-        .querySelectorAll(".question-item")
-        .forEach(item => {
+    answerInput.value = "";
 
-            item.classList.remove("selected");
-
-        });
-
-
-    const selectedQuestion =
-        document.querySelector(
-            `.question-item[data-index="${wordIndex}"]`
-        );
-
-
-    if (selectedQuestion) {
-
-        selectedQuestion.classList.add("selected");
-
-    }
-
+    answerInput.focus();
 }
 
 
@@ -509,10 +484,11 @@ const answerInput =
 const answerButton =
     document.getElementById("answerButton");
 
+
 answerButton.addEventListener("click", () => {
 
     if (selectedWordIndex === null) {
-        alert("먼저 문제를 선택해주세요.");
+        alert("먼저 퍼즐에서 문제를 선택해주세요.");
         return;
     }
 
@@ -523,22 +499,69 @@ answerButton.addEventListener("click", () => {
         answerInput.value.trim();
 
     if (!answer) {
-        alert("답을 입력해주세요.");
+        alert("정답을 입력해주세요.");
         answerInput.focus();
         return;
     }
 
-    if (answer.length !== [...word.answer].length) {
+    const answerLength =
+        [...word.answer].length;
+
+    if ([...answer].length !== answerLength) {
+
         alert(
-            `정답은 ${[...word.answer].length}글자입니다.`
+            `정답은 ${answerLength}글자입니다.`
         );
+
+        answerInput.focus();
         return;
     }
 
     fillAnswer(word, answer);
-
 });
 
+function fillAnswer(word, answer) {
+
+    const letters = [...answer];
+
+    letters.forEach((letter, index) => {
+
+        let row = word.row - 1;
+        let col = word.col - 1;
+
+        if (word.direction === "across") {
+            col += index;
+        }
+
+        if (word.direction === "down") {
+            row += index;
+        }
+
+        const cell =
+            document.querySelector(
+                `.puzzle-cell[data-row="${row}"][data-col="${col}"]`
+            );
+
+        if (!cell) return;
+
+        let letterElement =
+            cell.querySelector(".cell-letter");
+
+        if (!letterElement) {
+
+            letterElement =
+                document.createElement("span");
+
+            letterElement.classList.add(
+                "cell-letter"
+            );
+
+            cell.appendChild(letterElement);
+        }
+
+        letterElement.textContent = letter;
+    });
+}
 
 
 // ----------------------------------------
