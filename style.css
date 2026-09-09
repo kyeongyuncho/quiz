@@ -10,8 +10,12 @@ body{
     width:min(100%,680px);margin:auto;padding:18px 14px 40px
 }
 
-.screen{
-    display:none}.screen.active{display:block
+.screen {
+    display: block;
+}
+
+.screen.hidden {
+    display: none;
 }
 
 .hero{
