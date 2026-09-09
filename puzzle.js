@@ -136,9 +136,6 @@ const questionNumber =
 const questionText =
     document.getElementById("questionText");
 
-const questionList =
-    document.getElementById("questionList");
-
 
 // 칸 정보 저장
 const cells = {};
@@ -427,56 +424,7 @@ function highlightWord(word) {
 // 문제 목록 만들기
 // ----------------------------------------
 
-function makeQuestionList() {
 
-    questionList.innerHTML = "";
-
-
-    puzzle.words.forEach(
-        (word, index) => {
-
-            const item =
-                document.createElement("button");
-
-
-            item.classList.add("question-item");
-
-            item.dataset.index = index;
-
-
-            item.innerHTML = `
-                <strong>
-                    ${word.direction === "across" ? "가로" : "세로"}
-                    ${word.number}번
-                </strong>
-
-                ${word.question}
-            `;
-
-
-            item.addEventListener(
-                "click",
-                () => {
-
-                    const firstKey =
-                        getKey(
-                            word.row - 1,
-                            word.col - 1
-                        );
-
-
-                    selectCell(cells[firstKey]);
-
-                }
-            );
-
-
-            questionList.appendChild(item);
-
-        }
-    );
-
-}
 
 const answerInput =
     document.getElementById("answerInput");
@@ -571,5 +519,3 @@ function fillAnswer(word, answer) {
 makePuzzle();
 
 drawGrid();
-
-makeQuestionList();
