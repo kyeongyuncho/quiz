@@ -23,6 +23,7 @@ answer: "최소수집"
 
 */
 
+let selectedWordIndex = null;
 
 const puzzle = {
 
@@ -322,6 +323,8 @@ function drawGrid() {
 
 function selectCell(data) {
 
+    selectedWordIndex = wordIndex;
+
     // 이전 선택 제거
     document
         .querySelectorAll(".puzzle-cell")
@@ -499,6 +502,43 @@ function makeQuestionList() {
     );
 
 }
+
+const answerInput =
+    document.getElementById("answerInput");
+
+const answerButton =
+    document.getElementById("answerButton");
+
+answerButton.addEventListener("click", () => {
+
+    if (selectedWordIndex === null) {
+        alert("먼저 문제를 선택해주세요.");
+        return;
+    }
+
+    const word =
+        puzzle.words[selectedWordIndex];
+
+    const answer =
+        answerInput.value.trim();
+
+    if (!answer) {
+        alert("답을 입력해주세요.");
+        answerInput.focus();
+        return;
+    }
+
+    if (answer.length !== [...word.answer].length) {
+        alert(
+            `정답은 ${[...word.answer].length}글자입니다.`
+        );
+        return;
+    }
+
+    fillAnswer(word, answer);
+
+});
+
 
 
 // ----------------------------------------
