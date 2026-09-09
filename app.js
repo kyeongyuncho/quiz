@@ -164,20 +164,25 @@ Firebase 로그인
 ========================================
 */
 
-signInAnonymously(auth)
-    .catch(
-        error => {
+let authReady = null;
 
-            console.error(
-                error
-            );
+authReady = signInAnonymously(auth)
+    .then((result) => {
+        currentUser = result.user;
+        console.log("Firebase 익명 로그인 성공:", currentUser.uid);
+        return currentUser;
+    })
+    .catch((error) => {
+        console.error("Firebase 익명 로그인 실패:", error);
 
-            alert(
-                "Firebase 로그인에 실패했습니다."
-            );
+        alert(
+            "Firebase 연결에 실패했습니다.\n\n" +
+            "Firebase Console의 익명 로그인 및\n" +
+            "Authorized domains 설정을 확인해주세요."
+        );
 
-        }
-    );
+        throw error;
+    });
 
 
 onAuthStateChanged(
@@ -414,42 +419,17 @@ Auth 대기
 ========================================
 */
 
-function waitForAuth() {
+async function waitForAuth() {
 
-    return new Promise(
-        resolve => {
+    if (currentUser) {
+        return currentUser;
+    }
 
-            if (currentUser) {
+    if (authReady) {
+        return await authReady;
+    }
 
-                resolve();
-
-                return;
-
-            }
-
-
-            const unsubscribe =
-                onAuthStateChanged(
-                    auth,
-                    user => {
-
-                        if (user) {
-
-                            currentUser =
-                                user;
-
-                            unsubscribe();
-
-                            resolve();
-
-                        }
-
-                    }
-                );
-
-        }
-    );
-
+    throw new Error("Firebase 인증이 준비되지 않았습니다.");
 }
 
 
