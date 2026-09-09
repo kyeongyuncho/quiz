@@ -8,7 +8,7 @@
 const puzzle = {
 
     rows: 16,
-    cols: 13,
+    cols: 14,
 
     words: [
 
