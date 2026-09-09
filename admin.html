@@ -1,714 +1,307 @@
-/*
-========================================
-개인정보 보호 가로세로 낱말퀴즈
-문제 설정
-========================================
-*/
+<!DOCTYPE html>
+<html lang="ko">
 
-const puzzle = {
+<head>
 
-    rows: 13,
-    cols: 13,
+    <meta charset="UTF-8">
 
-    words: [
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-        {
-            number: 1,
-            direction: "across",
-            row: 2,
-            col: 2,
-            answer: "최소수집",
-            question:
-                "개인정보를 필요한 범위에서만 수집하는 원칙"
-        },
+    <title>낱말퀴즈 관리자</title>
 
-        {
-            number: 2,
-            direction: "down",
-            row: 1,
-            col: 4,
-            answer: "개인정보",
-            question:
-                "살아 있는 개인을 알아볼 수 있는 정보"
-        },
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 
-        {
-            number: 3,
-            direction: "across",
-            row: 5,
-            col: 4,
-            answer: "파기",
-            question:
-                "보유기간이 지나거나 처리 목적이 달성된 개인정보를 없애는 것"
-        },
+    <style>
 
-        {
-            number: 4,
-            direction: "down",
-            row: 4,
-            col: 6,
-            answer: "안전성확보",
-            question:
-                "개인정보의 분실·도난·유출 등을 방지하기 위한 조치"
-        },
-
-        {
-            number: 5,
-            direction: "across",
-            row: 8,
-            col: 3,
-            answer: "접근권한",
-            question:
-                "개인정보처리시스템에 접근할 수 있는 권한"
-        },
-
-        {
-            number: 6,
-            direction: "down",
-            row: 7,
-            col: 8,
-            answer: "고유식별정보",
-            question:
-                "개인을 고유하게 구별하기 위해 부여된 정보"
+        body {
+            background: #f4f6fa;
         }
 
-    ]
-
-};
-
-
-/*
-========================================
-퍼즐 변수
-========================================
-*/
-
-const grid =
-    document.getElementById("puzzleGrid");
-
-const questionNumber =
-    document.getElementById("questionNumber");
-
-const questionText =
-    document.getElementById("questionText");
-
-const answerInput =
-    document.getElementById("answerInput");
-
-const answerButton =
-    document.getElementById("answerButton");
-
-const answerMessage =
-    document.getElementById("answerMessage");
-
-
-const cells = {};
-
-let selectedWordIndex = null;
-
-let selectedDirection = null;
-
-
-/*
-========================================
-좌표 Key
-========================================
-*/
-
-function getKey(row, col) {
-
-    return `${row}-${col}`;
-
-}
-
-
-/*
-========================================
-퍼즐 데이터 생성
-========================================
-*/
-
-function makePuzzle() {
-
-    Object.keys(cells).forEach(
-        key => delete cells[key]
-    );
-
-
-    puzzle.words.forEach(
-        (word, wordIndex) => {
-
-            const answer =
-                [...word.answer];
-
-
-            answer.forEach(
-                (letter, index) => {
-
-                    let row =
-                        word.row - 1;
-
-                    let col =
-                        word.col - 1;
-
-
-                    if (
-                        word.direction === "down"
-                    ) {
-
-                        row += index;
-
-                    }
-
-
-                    if (
-                        word.direction === "across"
-                    ) {
-
-                        col += index;
-
-                    }
-
-
-                    const key =
-                        getKey(row, col);
-
-
-                    if (!cells[key]) {
-
-                        cells[key] = {
-
-                            row,
-                            col,
-
-                            letter,
-
-                            words: []
-
-                        };
-
-                    }
-
-
-                    /*
-                    교차점 처리
-                    */
-
-                    if (
-                        cells[key].letter !==
-                        letter
-                    ) {
-
-                        console.error(
-                            "교차 문자 불일치:",
-                            key,
-                            cells[key].letter,
-                            letter
-                        );
-
-                    }
-
-
-                    if (
-                        !cells[key].words.includes(
-                            wordIndex
-                        )
-                    ) {
-
-                        cells[key].words.push(
-                            wordIndex
-                        );
-
-                    }
-
-                }
-
-            );
-
+        .admin-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px;
         }
 
-    );
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
 
-}
+        .admin-title {
+            font-size: 24px;
+            font-weight: 900;
+        }
 
+        .status-badge {
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: #e7efff;
+            color: #2457d6;
+            font-weight: 800;
+        }
 
-/*
-========================================
-그리드 그리기
-========================================
-*/
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
 
-function drawGrid() {
+        .admin-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06);
+        }
 
-    grid.innerHTML = "";
+        .admin-card h2 {
+            margin-top: 0;
+            font-size: 18px;
+        }
 
+        .current-question {
+            font-size: 30px;
+            font-weight: 900;
+            margin: 15px 0;
+        }
 
-    grid.style.gridTemplateColumns =
-        `repeat(${puzzle.cols}, 1fr)`;
+        .control-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
 
+        .control-buttons button {
+            min-height: 48px;
+            border: 0;
+            border-radius: 10px;
+            background: #2457d6;
+            color: white;
+            font-weight: 800;
+            cursor: pointer;
+        }
 
-    for (
-        let row = 0;
-        row < puzzle.rows;
-        row++
-    ) {
+        .control-buttons button.secondary {
+            background: #e9edf5;
+            color: #172033;
+        }
 
-        for (
-            let col = 0;
-            col < puzzle.cols;
-            col++
-        ) {
+        .participant-count {
+            font-size: 36px;
+            font-weight: 900;
+        }
 
-            const cell =
-                document.createElement("div");
+        .admin-ranking-row,
+        .answer-row {
+            display: grid;
+            grid-template-columns: 50px 1fr 100px;
+            gap: 8px;
+            padding: 10px 0;
+            border-bottom: 1px solid #edf0f5;
+        }
 
+        .answer-row {
+            grid-template-columns: 80px 1fr 100px 100px;
+        }
 
-            cell.classList.add(
-                "puzzle-cell"
-            );
+        .correct {
+            color: #17834b;
+            font-weight: 800;
+        }
 
+        .wrong {
+            color: #d84a4a;
+            font-weight: 800;
+        }
 
-            const key =
-                getKey(row, col);
+        @media (max-width: 700px) {
 
-
-            const data =
-                cells[key];
-
-
-            if (!data) {
-
-                cell.classList.add("block");
-
+            .admin-grid {
+                grid-template-columns: 1fr;
             }
 
-
-            else {
-
-                cell.classList.add("active");
-
-
-                cell.dataset.row =
-                    row;
-
-                cell.dataset.col =
-                    col;
-
-
-                /*
-                시작번호 표시
-                */
-
-                const startWords =
-                    puzzle.words.filter(
-                        word =>
-                            word.row - 1 === row &&
-                            word.col - 1 === col
-                    );
-
-
-                if (
-                    startWords.length > 0
-                ) {
-
-                    const number =
-                        document.createElement(
-                            "span"
-                        );
-
-
-                    number.classList.add(
-                        "cell-number"
-                    );
-
-
-                    number.textContent =
-                        startWords
-                            .map(word => word.number)
-                            .join("/");
-
-
-                    cell.appendChild(number);
-
-                }
-
-
-                cell.addEventListener(
-                    "click",
-                    () => {
-
-                        selectCell(data);
-
-                    }
-                );
-
+            .control-buttons {
+                grid-template-columns: 1fr 1fr;
             }
 
-
-            grid.appendChild(cell);
-
-        }
-
-    }
-
-}
-
-
-/*
-========================================
-칸 선택
-
-교차점이면
-가로 → 세로 → 가로
-토글
-========================================
-*/
-
-function selectCell(data) {
-
-    let wordIndex;
-
-
-    if (
-        data.words.length === 1
-    ) {
-
-        wordIndex =
-            data.words[0];
-
-    }
-
-
-    else {
-
-        /*
-        교차점
-        현재 방향과 반대되는 단어 선택
-        */
-
-        const otherWord =
-            data.words.find(
-                index =>
-                    puzzle.words[index].direction !==
-                    selectedDirection
-            );
-
-
-        wordIndex =
-            otherWord ??
-            data.words[0];
-
-    }
-
-
-    selectedWordIndex =
-        wordIndex;
-
-
-    const word =
-        puzzle.words[wordIndex];
-
-
-    selectedDirection =
-        word.direction;
-
-
-    document
-        .querySelectorAll(
-            ".puzzle-cell"
-        )
-        .forEach(
-            cell => {
-
-                cell.classList.remove(
-                    "selected",
-                    "word-selected"
-                );
-
-            }
-        );
-
-
-    questionNumber.textContent =
-        `${word.direction === "across" ? "가로" : "세로"} ${word.number}번`;
-
-
-    questionText.textContent =
-        word.question;
-
-
-    highlightWord(word);
-
-
-    const selectedCell =
-        document.querySelector(
-            `.puzzle-cell[data-row="${data.row}"][data-col="${data.col}"]`
-        );
-
-
-    if (selectedCell) {
-
-        selectedCell.classList.add(
-            "selected"
-        );
-
-    }
-
-
-    answerInput.value = "";
-
-
-    answerMessage.textContent = "";
-
-
-    answerInput.focus();
-
-}
-
-
-/*
-========================================
-단어 강조
-========================================
-*/
-
-function highlightWord(word) {
-
-    const length =
-        [...word.answer].length;
-
-
-    for (
-        let i = 0;
-        i < length;
-        i++
-    ) {
-
-        let row =
-            word.row - 1;
-
-        let col =
-            word.col - 1;
-
-
-        if (
-            word.direction === "across"
-        ) {
-
-            col += i;
-
-        }
-
-
-        if (
-            word.direction === "down"
-        ) {
-
-            row += i;
-
-        }
-
-
-        const cell =
-            document.querySelector(
-                `.puzzle-cell[data-row="${row}"][data-col="${col}"]`
-            );
-
-
-        if (cell) {
-
-            cell.classList.add(
-                "word-selected"
-            );
-
-        }
-
-    }
-
-}
-
-
-/*
-========================================
-정답 입력
-========================================
-*/
-
-answerButton.addEventListener(
-    "click",
-    submitAnswer
-);
-
-
-answerInput.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "Enter"
-        ) {
-
-            submitAnswer();
-
-        }
-
-    }
-);
-
-
-function submitAnswer() {
-
-    if (
-        selectedWordIndex === null
-    ) {
-
-        alert(
-            "먼저 퍼즐에서 문제를 선택해주세요."
-        );
-
-        return;
-
-    }
-
-
-    const word =
-        puzzle.words[selectedWordIndex];
-
-
-    const answer =
-        answerInput.value.trim();
-
-
-    if (!answer) {
-
-        alert(
-            "정답을 입력해주세요."
-        );
-
-        answerInput.focus();
-
-        return;
-
-    }
-
-
-    /*
-    실제 입력값 기록
-    */
-
-    if (
-        typeof window.recordAnswer ===
-        "function"
-    ) {
-
-        window.recordAnswer(
-            selectedWordIndex,
-            answer
-        );
-
-    }
-
-}
-
-
-/*
-========================================
-정답을 퍼즐에 표시
-========================================
-*/
-
-function fillAnswer(
-    word,
-    answer
-) {
-
-    const letters =
-        [...answer];
-
-
-    letters.forEach(
-        (letter, index) => {
-
-            let row =
-                word.row - 1;
-
-            let col =
-                word.col - 1;
-
-
-            if (
-                word.direction === "across"
-            ) {
-
-                col += index;
-
+            .admin-container {
+                padding: 14px;
             }
 
-
-            if (
-                word.direction === "down"
-            ) {
-
-                row += index;
-
-            }
-
-
-            const cell =
-                document.querySelector(
-                    `.puzzle-cell[data-row="${row}"][data-col="${col}"]`
-                );
-
-
-            if (!cell) return;
-
-
-            let letterElement =
-                cell.querySelector(
-                    ".cell-letter"
-                );
-
-
-            if (!letterElement) {
-
-                letterElement =
-                    document.createElement(
-                        "span"
-                    );
-
-
-                letterElement.classList.add(
-                    "cell-letter"
-                );
-
-
-                cell.appendChild(
-                    letterElement
-                );
-
-            }
-
-
-            letterElement.textContent =
-                letter;
-
         }
-    );
 
-}
+    </style>
 
-
-/*
-외부에서 사용할 수 있도록 등록
-*/
-
-window.fillPuzzleAnswer =
-    fillAnswer;
+</head>
 
 
-window.getPuzzle =
-    () => puzzle;
+<body>
+
+<div class="admin-container">
+
+    <header class="admin-header">
+
+        <div>
+
+            <div class="admin-title">
+                🔐 개인정보 보호 낱말퀴즈 관리자
+            </div>
+
+            <div>
+                실시간 진행 관리
+            </div>
+
+        </div>
+
+        <div
+            id="quizStatus"
+            class="status-badge"
+        >
+            대기 중
+        </div>
+
+    </header>
 
 
-makePuzzle();
-drawGrid();
+    <!-- 문제 진행 -->
+    <section class="admin-card">
+
+        <h2>문제 진행</h2>
+
+        <div
+            id="currentQuestion"
+            class="current-question"
+        >
+            시작 전
+        </div>
+
+        <div
+            id="currentClue"
+            style="margin-bottom:20px;"
+        >
+            -
+        </div>
+
+
+        <div class="control-buttons">
+
+            <button
+                id="startButton"
+            >
+                문제 시작
+            </button>
+
+            <button
+                id="previousButton"
+                class="secondary"
+            >
+                이전 문제
+            </button>
+
+            <button
+                id="nextButton"
+            >
+                다음 문제
+            </button>
+
+            <button
+                id="pauseButton"
+                class="secondary"
+            >
+                일시정지
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <br>
+
+
+    <div class="admin-grid">
+
+        <!-- 참가자 -->
+        <section class="admin-card">
+
+            <h2>현재 참가자</h2>
+
+            <div
+                id="participantCount"
+                class="participant-count"
+            >
+                0
+            </div>
+
+            <div>
+                명
+            </div>
+
+        </section>
+
+
+        <!-- 순위 -->
+        <section class="admin-card">
+
+            <h2>🏆 실시간 TOP 5</h2>
+
+            <div id="adminRanking">
+                -
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <br>
+
+
+    <!-- 답안 -->
+    <section class="admin-card">
+
+        <h2>
+            참가자 답안 현황
+        </h2>
+
+        <div id="answerList">
+            아직 답안이 없습니다.
+        </div>
+
+    </section>
+
+
+    <br>
+
+
+    <!-- 참가자 전체 -->
+    <section class="admin-card">
+
+        <h2>
+            참가자 목록
+        </h2>
+
+        <div id="participantList">
+            -
+        </div>
+
+    </section>
+
+</div>
+
+
+<script
+    type="module"
+    src="./admin.js"
+></script>
+
+</body>
+</html>
