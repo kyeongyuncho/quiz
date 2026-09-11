@@ -856,8 +856,7 @@ async function processCorrectAnswer(
                             participantRef
                         );    
 
-                    let ranking =
-                        [];
+                    let ranking = [];
 
 
                     if (
@@ -892,8 +891,8 @@ async function processCorrectAnswer(
                         );
 
                     const currentScore =
-                        participant.exists()
-                            ? participant.data().totalScore || 0
+                         participantSnapshot.exists()
+                            ? participantSnapshot.data().totalScore || 0
                             : 0;
                     /*
                     제출 기록
@@ -952,11 +951,6 @@ async function processCorrectAnswer(
                     /*
                     참가자 점수 증가
                     */
-
-                    const participant =
-                        await transaction.get(
-                            participantRef
-                        );
 
                     transaction.update(
                         participantRef,
