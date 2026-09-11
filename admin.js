@@ -23,6 +23,8 @@ import {
     collection,
     query,
     orderBy,
+    getDocs,
+    writeBatch,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
@@ -932,6 +934,120 @@ function listenAnswers() {
 
             }
         );
+
+}
+
+
+/*
+========================================
+퀴즈 전체 초기화
+========================================
+*/
+
+const resetButton =
+    document.getElementById(
+        "resetButton"
+    );
+
+
+if (resetButton) {
+
+    resetButton.addEventListener(
+        "click",
+        async () => {
+
+            const confirmed =
+                confirm(
+                    "퀴즈 전체 초기화를 진행할까요?\n\n참가자, 모든 답안, 문제별 정답 순위가 모두 삭제되고 퀴즈가 대기 상태로 돌아갑니다."
+                );
+
+            if (!confirmed) return;
+
+            resetButton.disabled = true;
+            resetButton.textContent = "초기화 중...";
+
+            try {
+
+                const batch = writeBatch(db);
+
+                const participantsSnapshot =
+                    await getDocs(
+                        collection(
+                            db,
+                            "events",
+                            EVENT_ID,
+                            "participants"
+                        )
+                    );
+
+                const submissionsSnapshot =
+                    await getDocs(
+                        collection(
+                            db,
+                            "events",
+                            EVENT_ID,
+                            "submissions"
+                        )
+                    );
+
+                const questionsSnapshot =
+                    await getDocs(
+                        collection(
+                            db,
+                            "events",
+                            EVENT_ID,
+                            "questions"
+                        )
+                    );
+
+                participantsSnapshot.forEach(
+                    item => batch.delete(item.ref)
+                );
+
+                submissionsSnapshot.forEach(
+                    item => batch.delete(item.ref)
+                );
+
+                questionsSnapshot.forEach(
+                    item => batch.delete(item.ref)
+                );
+
+                batch.set(
+                    eventRef,
+                    {
+                        currentQuestion: -1,
+                        status: "waiting",
+                        updatedAt: serverTimestamp()
+                    },
+                    { merge: true }
+                );
+
+                await batch.commit();
+
+                alert(
+                    "퀴즈 전체 초기화가 완료되었습니다.\n새 참가자를 받아 다시 시작할 수 있습니다."
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "퀴즈 초기화 오류:",
+                    error
+                );
+
+                alert(
+                    "퀴즈 초기화 중 오류가 발생했습니다.\n콘솔(F12)에서 오류 내용을 확인해주세요."
+                );
+
+            } finally {
+
+                resetButton.disabled = false;
+                resetButton.textContent = "🗑️ 퀴즈 전체 초기화";
+
+            }
+
+        }
+    );
 
 }
 
