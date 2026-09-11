@@ -683,38 +683,64 @@ window.recordAnswer =
         답안 기록 ID
         */
 
-        const submissionId =
-            `${currentUser.uid}_${wordIndex}`;
-
-
-        const submissionRef =
-            doc(
-                db,
-                "events",
-                EVENT_ID,
-                "submissions",
-                submissionId
-            );
-
-
         /*
-        이미 제출한 경우
+        답안 제출 횟수 확인
+        최대 3회까지 입력 가능
         */
 
-        const previous =
-            await getDoc(
-                submissionRef
-            );
+        let attempt = 0;
+        let submissionRef = null;
+        let hasCorrectAnswer = false;
 
+        for (let i = 1; i <= 3; i++) {
 
-        if (previous.exists()) {
+            const candidateRef =
+                doc(
+                    db,
+                    "events",
+                    EVENT_ID,
+                    "submissions",
+                    `${currentUser.uid}_${wordIndex}_${i}`
+                );
+
+            const candidate =
+                await getDoc(candidateRef);
+
+            if (candidate.exists()) {
+
+                if (candidate.data().correct) {
+                    hasCorrectAnswer = true;
+                    break;
+                }
+
+                attempt = i;
+                continue;
+            }
+
+            attempt = i;
+            submissionRef = candidateRef;
+            break;
+        }
+
+        if (hasCorrectAnswer) {
 
             alert(
-                "이 문제에는 이미 답안을 제출했습니다."
+                "이 문제는 이미 정답 처리되었습니다."
             );
 
             return;
+        }
 
+        if (!submissionRef || attempt > 3) {
+
+            document
+                .getElementById(
+                    "answerMessage"
+                )
+                .textContent =
+                "❌ 3회 모두 오답입니다. 이 문제는 종료되었습니다.";
+
+            return;
         }
 
 
@@ -753,12 +779,17 @@ window.recordAnswer =
             );
 
 
+            const remaining =
+                3 - attempt;
+
             document
                 .getElementById(
                     "answerMessage"
                 )
                 .textContent =
-                "❌ 오답입니다.";
+                remaining > 0
+                    ? `❌ 오답입니다. (남은 기회 ${remaining}회)`
+                    : "❌ 오답입니다. 3회 모두 오답입니다. 이 문제는 종료되었습니다.";
 
 
             return;
@@ -868,6 +899,16 @@ async function processCorrectAnswer(
                                 .data()
                                 .ranking ||
                             [];
+
+                    }
+
+
+                    if (ranking.includes(currentUser.uid)) {
+
+                        return {
+                            already: true,
+                            points: 0
+                        };
 
                     }
 
