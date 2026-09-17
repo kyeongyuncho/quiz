@@ -94,6 +94,30 @@
             color: #172033;
         }
 
+        .reset-area {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #edf0f5;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        #resetButton {
+            min-height: 44px;
+            padding: 0 16px;
+            border: 0;
+            border-radius: 10px;
+            background: #d84a4a;
+            color: white;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        #resetButton:disabled {
+            opacity: .6;
+            cursor: wait;
+        }
+
         .participant-count {
             font-size: 36px;
             font-weight: 900;
@@ -219,6 +243,10 @@
                 일시정지
             </button>
 
+        </div>
+
+        <div class="reset-area">
+            <button id="resetButton" type="button">🗑️ 퀴즈 전체 초기화</button>
         </div>
 
     </section>
