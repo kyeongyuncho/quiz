@@ -1,10 +1,3 @@
-/*
-========================================
-개인정보 보호 가로세로 낱말퀴즈
-문제 설정
-========================================
-*/
-
 const puzzle = {
 
     rows: 16,
@@ -225,7 +218,7 @@ const puzzle = {
 
 /*
 ========================================
-퍼즐 변수
+퍼즐 화면/동작
 ========================================
 */
 
@@ -528,8 +521,7 @@ function selectCell(data) {
     else {
 
         /*
-        교차점
-        현재 방향과 반대되는 단어 선택
+        교차점에서는 현재 방향과 반대되는 단어를 선택
         */
 
         const otherWord =
@@ -539,13 +531,39 @@ function selectCell(data) {
                     selectedDirection
             );
 
-
         wordIndex =
             otherWord ??
             data.words[0];
 
     }
 
+
+    selectWord(wordIndex, data);
+
+}
+
+
+/*
+관리자에서 특정 문제를 강제로 선택할 때 사용
+교차점의 방향 토글에 영향을 받지 않는다.
+*/
+function selectWord(wordIndex) {
+
+    const word =
+        puzzle.words[wordIndex];
+
+    if (!word) return;
+
+
+    const data =
+        cells[getKey(word.row - 1, word.col - 1)];
+
+    selectWordInternal(wordIndex, data);
+
+}
+
+
+function selectWordInternal(wordIndex, data) {
 
     selectedWordIndex =
         wordIndex;
@@ -586,30 +604,31 @@ function selectCell(data) {
     highlightWord(word);
 
 
-    const selectedCell =
-        document.querySelector(
-            `.puzzle-cell[data-row="${data.row}"][data-col="${data.col}"]`
-        );
+    if (data) {
 
+        const selectedCell =
+            document.querySelector(
+                `.puzzle-cell[data-row="${data.row}"][data-col="${data.col}"]`
+            );
 
-    if (selectedCell) {
-
-        selectedCell.classList.add(
-            "selected"
-        );
+        if (selectedCell) {
+            selectedCell.classList.add("selected");
+        }
 
     }
 
 
     answerInput.value = "";
 
-
     answerMessage.textContent = "";
-
 
     answerInput.focus();
 
 }
+
+
+window.selectPuzzleWord =
+    selectWord;
 
 
 /*

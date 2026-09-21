@@ -528,7 +528,34 @@ function listenQuizState() {
                 }
 
 
-                currentQuestionIndex =
+                /*
+            관리자가 다음/이전 문제로 이동하면
+            직전 문제의 정답을 퍼즐에 공개
+            */
+            if (
+                currentQuestionIndex !== -1 &&
+                currentQuestionIndex !== newQuestion
+            ) {
+
+                const puzzle =
+                    window.getPuzzle();
+
+                const previousWord =
+                    puzzle.words[currentQuestionIndex];
+
+                if (previousWord) {
+
+                    window.fillPuzzleAnswer(
+                        previousWord,
+                        previousWord.answer
+                    );
+
+                }
+
+            }
+
+
+            currentQuestionIndex =
                     newQuestion;
 
 
@@ -579,27 +606,32 @@ function loadQuestion(
 
 
     /*
-    해당 문제 자동 선택
+    해당 문제를 직접 선택
+
+    시작 칸이 다른 단어와 교차하는 경우
+    단순히 cell.click()을 하면 반대 방향 단어가
+    선택될 수 있으므로 wordIndex를 직접 지정한다.
     */
 
-    const key =
-        `${word.row - 1}-${word.col - 1}`;
+    if (
+        typeof window.selectPuzzleWord ===
+        "function"
+    ) {
 
+        window.selectPuzzleWord(index);
 
-    /*
-    puzzle.js의 cells는 직접 노출하지 않으므로
-    시작 칸을 찾아 클릭
-    */
+    }
 
-    const cell =
-        document.querySelector(
-            `.puzzle-cell[data-row="${word.row - 1}"][data-col="${word.col - 1}"]`
-        );
+    else {
 
+        const cell =
+            document.querySelector(
+                `.puzzle-cell[data-row="${word.row - 1}"][data-col="${word.col - 1}"]`
+            );
 
-    if (cell) {
-
-        cell.click();
+        if (cell) {
+            cell.click();
+        }
 
     }
 
@@ -1055,6 +1087,11 @@ async function processCorrectAnswer(
             )
             .textContent =
             `🎉 정답입니다! +${result.points}점`;
+
+
+        alert(
+            `🎉 정답입니다!\n\n+${result.points}점 획득\n현재 ${result.rank}등입니다.`
+        );
 
 
     }
