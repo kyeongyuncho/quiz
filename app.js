@@ -1089,8 +1089,9 @@ async function processCorrectAnswer(
             `🎉 정답입니다! +${result.points}점`;
 
 
-        alert(
-            `🎉 정답입니다!\n\n+${result.points}점 획득\n현재 ${result.rank}등입니다.`
+        showCorrectModal(
+            result.points,
+            result.rank
         );
 
 
@@ -1335,8 +1336,12 @@ async function showFinalResult() {
                 participants
                     .map(
                         (participant, index) => `
-                            <div class="final-rank-row">
-                                <span>
+                            <div class="final-rank-row ${
+                                participant.uid === currentUser.uid
+                                    ? "me"
+                                    : ""
+                            }">
+                                <span class="rank-number">
                                     ${index + 1}위
                                 </span>
 
@@ -1358,6 +1363,86 @@ async function showFinalResult() {
     );
 
 }
+
+
+/*
+========================================
+정답 팝업
+========================================
+*/
+
+function showCorrectModal(points, rank) {
+
+    const modal =
+        document.getElementById("correctModal");
+
+    if (!modal) return;
+
+    document.getElementById("correctScore").textContent =
+        `+${points}점 획득`;
+
+    document.getElementById("correctRank").textContent =
+        `현재 ${rank}등`;
+
+    modal.classList.remove("hidden");
+
+    document.body.classList.add("modal-open");
+
+}
+
+function closeCorrectModal() {
+
+    const modal =
+        document.getElementById("correctModal");
+
+    if (!modal) return;
+
+    modal.classList.add("hidden");
+
+    document.body.classList.remove("modal-open");
+
+}
+
+const correctModalClose =
+    document.getElementById("correctModalClose");
+
+if (correctModalClose) {
+
+    correctModalClose.addEventListener(
+        "click",
+        closeCorrectModal
+    );
+
+}
+
+const correctModal =
+    document.getElementById("correctModal");
+
+if (correctModal) {
+
+    correctModal.addEventListener(
+        "click",
+        event => {
+
+            if (event.target === correctModal) {
+                closeCorrectModal();
+            }
+
+        }
+    );
+
+}
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (event.key === "Escape") {
+            closeCorrectModal();
+        }
+
+    }
+);
 
 
 /*
