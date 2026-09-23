@@ -529,31 +529,50 @@ function listenQuizState() {
 
 
                 /*
-            관리자가 다음/이전 문제로 이동하면
-            직전 문제의 정답을 퍼즐에 공개
-            */
-            if (
-                currentQuestionIndex !== -1 &&
-                currentQuestionIndex !== newQuestion
-            ) {
+            문제 이동 시 퍼즐 공개 상태를 정리합니다.
 
-                const puzzle =
-                    window.getPuzzle();
+            - 다음 문제: 방금 지나간 문제의 정답 공개
+            - 이전 문제: 현재 문제보다 뒤쪽 문제는 숨김
+            - 첫 문제: 모든 정답 숨김
+            */
+            const puzzle = window.getPuzzle();
+
+            if (currentQuestionIndex === -1) {
+
+                if (typeof window.clearPuzzleAnswers === "function") {
+                    window.clearPuzzleAnswers();
+                }
+
+            } else if (newQuestion > currentQuestionIndex) {
 
                 const previousWord =
                     puzzle.words[currentQuestionIndex];
 
                 if (previousWord) {
-
                     window.fillPuzzleAnswer(
                         previousWord,
                         previousWord.answer
                     );
+                }
 
+            } else if (newQuestion < currentQuestionIndex) {
+
+                if (typeof window.clearPuzzleAnswers === "function") {
+                    window.clearPuzzleAnswers();
+                }
+
+                // 현재 문제보다 앞선 문제만 공개합니다.
+                for (let i = 0; i < newQuestion; i++) {
+                    const solvedWord = puzzle.words[i];
+                    if (solvedWord) {
+                        window.fillPuzzleAnswer(
+                            solvedWord,
+                            solvedWord.answer
+                        );
+                    }
                 }
 
             }
-
 
             currentQuestionIndex =
                     newQuestion;

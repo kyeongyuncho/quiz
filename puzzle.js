@@ -782,6 +782,19 @@ function submitAnswer() {
 ========================================
 */
 
+function clearPuzzleAnswers() {
+
+    document
+        .querySelectorAll(
+            ".puzzle-cell .cell-letter"
+        )
+        .forEach(
+            element => element.remove()
+        );
+
+}
+
+
 function fillAnswer(
     word,
     answer
@@ -870,6 +883,8 @@ function fillAnswer(
 window.fillPuzzleAnswer =
     fillAnswer;
 
+window.clearPuzzleAnswers =
+    clearPuzzleAnswers;
 
 window.getPuzzle =
     () => puzzle;
