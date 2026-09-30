@@ -140,9 +140,9 @@ const puzzle = {
             direction: "across",
             row: 15,
             col: 3,
-            answer: "피싱",
+            answer: "큐싱",
             question:
-                "신뢰할 수 있는 기관이나 사람으로 위장하여 사용자를 속이는 사이버 범죄 행위"
+                "QR코드와 피싱의 합성어로, 출처가 불분명한 QR코드 스캔 시 악성 앱을 설치하는 수법"
         },
 
         {
